@@ -30,18 +30,19 @@
 /* Use repos + commits to determine repos contributed to */
 /* https://api.github.com/repos/<username>/<repo name>/commits */
 
+var githubUsername = "femmebot";
 
 $('.btn').click(function() {
 
   $('.text').text('loading . . .');
 
-  var url = "https://api.github.com/users/femmebot/repos";
+  var url = "https://api.github.com/users/"+ githubUsername +"/repos";
 
   $.getJSON (url, function ( response ) {
       $.each (response, function (index, repos) {
 
         if (repos.fork === false) {
-          var commitURL = "https://api.github.com/repos/"+repos.full_name+"/commits"
+          var commitURL = "https://api.github.com/repos/"+ repos.full_name +"/commits"
           // $('.text').append('<p>' + commitURL + '</p>');
 
           var currentRepo = "";
