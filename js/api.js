@@ -2,7 +2,7 @@
 
 
 /*************************************/
-/* Github API display raw data       */
+/* Display Github API raw JSON       */
 /*************************************/
 
 //
@@ -30,43 +30,62 @@
 /* Use repos + commits to determine repos contributed to */
 /* https://api.github.com/repos/<username>/<repo name>/commits */
 
-var githubUsername = "femmebot";
+var $githubUsername = 'femmebot';
+var url = 'https://api.github.com/users/'+ $githubUsername + '/repos';
 
-$('.btn').click(function() {
+
+$( '.btn' ).click ( function () {
 
   $('.text').text('loading . . .');
+  githubCreatedProjects();
 
-  var url = "https://api.github.com/users/"+ githubUsername +"/repos";
+});
+
+
+$( '#githubNameForm' ).submit ( function () {
+  if ( $( '#userName' ).val() != '' ) {
+    $githubUsername = $( '#userName' ).val();
+    // console.log ($githubUsername);
+    $('.text').text('fetching Github projects created by ' + $githubUsername + '...');
+    githubCreatedProjects();
+  };
+});
+
+
+
+// Define functions
+
+var githubCreatedProjects = function () {
 
   $.getJSON (url, function ( response ) {
-      $.each (response, function (index, repos) {
+    $.each (response, function (index, repos) {
 
-        if (repos.fork === false) {
-          var commitURL = "https://api.github.com/repos/"+ repos.full_name +"/commits"
-          // $('.text').append('<p>' + commitURL + '</p>');
+      if (repos.fork === false) {
+        var commitURL = 'https://api.github.com/repos/' + repos.full_name + '/commits';
+        // $('.text').append('<p>' + commitURL + '</p>');
 
-          var currentRepo = "";
+        var currentRepo = '';
 
-          $.getJSON ( commitURL,function ( commitResponse ) {
-            $.each ( commitResponse, function (index, commitData) {
+        $.getJSON ( commitURL,function ( commitResponse ) {
+          $.each ( commitResponse, function (index, commitData) {
             // console.log( index + ' ' + commitData.commit.committer.name + ' ' + repos.owner.login );
-              if ( commitData.commit.committer.name === repos.owner.login && repos.name != currentRepo ) {
-                $('.text').append('<p>' + repos.name + '</p>');
-                currentRepo = repos.name;
+            if ( commitData.commit.committer.name === repos.owner.login && repos.name != currentRepo ) {
+              $('.text').append('<p>' + repos.name + '</p>');
+              currentRepo = repos.name;
 
-              } // end commits if statement
-            }) // end .each commitResponse loop
+            } // end commits if statement
+          }) // end .each commitResponse loop
 
-          }) // end getJSON commitURL callback function
+        }) // end getJSON commitURL callback function
 
-          // repoName += '<p>' + repos.full_name + '</p>';
-          // $('.text').append('<p>' + repos.full_name + '</p>');        }
+        // repoName += '<p>' + repos.full_name + '</p>';
+        // $('.text').append('<p>' + repos.full_name + '</p>');        }
         // $('.text').text( repoName );
 
       } // end repos.fork if statement
     }) // end .each response callback function
   }) // end main response callback
-});
+} // end function githubCreatedProjects
 
 /********************************/
 /* Meetup City Listing example  */
