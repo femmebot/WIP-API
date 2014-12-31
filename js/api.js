@@ -30,24 +30,24 @@
 /* Use repos + commits to determine repos contributed to */
 /* https://api.github.com/repos/<username>/<repo name>/commits */
 
-var $githubUsername = 'femmebot';
-var url = 'https://api.github.com/users/'+ $githubUsername + '/repos';
+// var $githubUsername = 'femmebot';
+// var $url = 'https://api.github.com/users/'+ $githubUsername + '/repos';
 
 
 $( '.btn' ).click ( function () {
 
-  $('.text').text('loading . . .');
-  githubCreatedProjects();
+  githubCreatedProjects( 'femmebot' );
 
 });
 
-
-$( '#githubNameForm' ).submit ( function () {
+// $("#githubNameForm").bind('submit', function() {
+$( '#userNameButton' ).click ( function () {
+  // e.preventDefault();
   if ( $( '#userName' ).val() != '' ) {
+
     $githubUsername = $( '#userName' ).val();
-    // console.log ($githubUsername);
-    $('.text').text('fetching Github projects created by ' + $githubUsername + '...');
-    githubCreatedProjects();
+    githubCreatedProjects( $githubUsername );
+
   };
 });
 
@@ -55,9 +55,15 @@ $( '#githubNameForm' ).submit ( function () {
 
 // Define functions
 
-var githubCreatedProjects = function () {
+var githubCreatedProjects = function ( userName ) {
 
-  $.getJSON (url, function ( response ) {
+  console.log(userName);
+
+  $('.text').text('fetching Github projects created by ' + userName + '...');
+
+  $url = 'https://api.github.com/users/'+ userName + '/repos';
+
+  $.getJSON ($url, function ( response ) {
     $.each (response, function (index, repos) {
 
       if (repos.fork === false) {
